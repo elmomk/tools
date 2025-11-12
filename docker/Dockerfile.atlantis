@@ -1,0 +1,24 @@
+FROM ghcr.io/runatlantis/atlantis:v0.37.1
+
+ARG TERRAGRUNT_VERSION=v0.93.5
+ARG TERRAFORM_VERSION=1.12.2
+
+ENV TERRAFORM=${TERRAFORM_VERSION}
+ENV TERRAGRUNT=${TERRAGRUNT_VERSION}
+
+USER root
+
+WORKDIR /usr/local/bin
+
+RUN curl -sS  -Lo terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM}/terraform_${TERRAFORM}_linux_amd64.zip" && \
+  unzip -o terraform.zip && \
+  rm terraform.zip && \
+  chmod +x terraform && \
+  terraform --version
+
+RUN curl -sS -Lo terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT}/terragrunt_linux_amd64 && \ 
+  chmod +x terragrunt && \
+  chown -R atlantis:atlantis /usr/local/bin/atlantis && \
+  terragrunt --version
+
+USER atlantis
